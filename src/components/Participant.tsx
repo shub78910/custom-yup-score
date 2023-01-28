@@ -22,7 +22,7 @@ export const Participant = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOKClicked, setIsOKClicked] = useState(false);
-  const [fullName, setFullName] = useState();
+  const [fullName, setFullName] = useState("");
 
   const scorePoints = [1, 2, 3, 5, 8, 13, 20, 34, 55, 80];
 
@@ -44,7 +44,7 @@ export const Participant = () => {
     });
   };
 
-  const sendScore = async (score) => {
+  const sendScore = async (score: any) => {
     setIsNewScore(false);
     await participantRef(inviteId)
       .where("fullName", "==", fullName)
@@ -57,7 +57,6 @@ export const Participant = () => {
         });
       });
   };
-  // console.log(isNewScore, "isNewScoreisNewScoreisNewScore");
   return (
     <div>
       {isOKClicked ? (
@@ -99,7 +98,7 @@ export const Participant = () => {
               onChange={(e) => {
                 setFullName(e.target.value);
               }}
-              maxLength="20"
+              max="20"
               className="w-80 p-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline"
             />
           </Modal>

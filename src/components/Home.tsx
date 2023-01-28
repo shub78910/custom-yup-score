@@ -1,14 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { AppContext } from "../App";
 import { db } from "../firebase";
 import { Button } from "antd";
 
 export const Home = () => {
   const navigate = useNavigate();
-  const contextData: any = useContext(AppContext);
-
-  const { setInviteId } = contextData;
 
   const createNewSession = async () => {
     const newSessionCollection = db.collection("Sessions").doc();
@@ -17,8 +12,6 @@ export const Home = () => {
       timestamp: new Date(),
       scoreCount: 0,
     });
-
-    setInviteId(newSessionCollection.id);
 
     navigate(`/host/${newSessionCollection.id}`);
   };
