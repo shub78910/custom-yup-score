@@ -1,6 +1,6 @@
 import { Button } from "antd";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { db } from "../firebase";
 import { participantRef } from "../firebase.config";
 import ParticipantCard from "./ParticipantCard";
@@ -10,6 +10,7 @@ export const Host = () => {
   let { inviteId } = useParams();
   const [participants, setParticipants] = useState<any>([]);
   const [majorityScore, setMajorityScore] = useState<any>(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (inviteId) {
@@ -87,8 +88,25 @@ export const Host = () => {
     setMajorityScore(majorityScore);
   };
 
+  //todo:
+  //copy to clipboard button, show tick mark when copied.
+  //show majority score
+  //try to gamify it as much as possible
+
   return (
     <div>
+      <div className="text-right m-5">
+        <Button
+          onClick={() => {
+            navigate("/");
+          }}
+          size="large"
+          type="primary"
+          className="bg-blue-500 text-white w-72"
+        >
+          Create a new session
+        </Button>
+      </div>
       <div className="mt-10 m-5 flex justify-between items-center">
         <div>
           <Button
@@ -109,14 +127,14 @@ export const Host = () => {
           </div>
           <div className="flex">
             <div className="bg-blue-200 p-2 rounded-md flex items-center">
-              https://scoreMe.web.app/participant/
+              https://score-me-8ccc3.web.app/participant/
               {inviteId}
             </div>
             <button
               onClick={() => {
-                navigator.clipboard
-                  .writeText(`https://scoreMe.web.app/participant/
-            ${inviteId}`);
+                navigator.clipboard.writeText(
+                  `https://score-me-8ccc3.web.app/participant/${inviteId}`
+                );
               }}
               className="m-2 border-black border-2 rounded-md p-2"
             >
@@ -138,7 +156,7 @@ export const Host = () => {
       </div>
 
       <div className="mt-16 m-5">
-        <span className="bg-blue-300 text-white text-2xl p-4">
+        <span className="bg-blue-400 rounded-md text-white text-2xl p-4">
           Majority Score: {majorityScore}
         </span>
       </div>
