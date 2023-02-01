@@ -36,13 +36,15 @@ export const Participant = () => {
   }, []);
 
   const handleOk = () => {
-    setIsModalOpen(false);
-    setIsOKClicked(true);
-    participantRef(inviteId).add({
-      fullName,
-      score: 0,
-      status: statusConstants.SCORING,
-    });
+    if (fullName !== "") {
+      setIsModalOpen(false);
+      setIsOKClicked(true);
+      participantRef(inviteId).add({
+        fullName,
+        score: 0,
+        status: statusConstants.SCORING,
+      });
+    }
   };
 
   const sendScore = async (score: any) => {
