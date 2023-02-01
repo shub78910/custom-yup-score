@@ -5,11 +5,13 @@ import { db } from "../firebase";
 import { participantRef } from "../firebase.config";
 import ParticipantCard from "./ParticipantCard";
 import statusType from "../constants/status.constants";
+import { CheckOutlined } from "@ant-design/icons";
 
 export const Host = () => {
   let { inviteId } = useParams();
   const [participants, setParticipants] = useState<any>([]);
   const [majorityScore, setMajorityScore] = useState<any>(0);
+  const [copyText, setCopyText] = useState<string>("Copy to Clipboard");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,12 +61,8 @@ export const Host = () => {
   const showScore = async () => {
     calculateMajorityScore();
 
-    console.log("updating status");
-
-    await db
-      .collection("Sessions")
-      .doc(inviteId)
-      .collection("participants")
+    await db;
+    participantRef(inviteId)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -88,6 +86,17 @@ export const Host = () => {
     setMajorityScore(majorityScore);
   };
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(
+      `https://score-me-8ccc3.web.app/participant/${inviteId}`
+    );
+
+    setCopyText("Copied");
+    setTimeout(() => {
+      setCopyText("Copy to Clipboard");
+    }, 3000);
+  };
+
   //todo:
   //copy to clipboard button, show tick mark when copied.
   //show majority score
@@ -95,19 +104,19 @@ export const Host = () => {
 
   return (
     <div>
-      <div className="text-right m-5">
+      <div className="m-5">
         <Button
           onClick={() => {
             navigate("/");
           }}
           size="large"
           type="primary"
-          className="bg-blue-500 text-white w-72"
+          className="bg-gray-500"
         >
-          Create a new session
+          Back to home
         </Button>
       </div>
-      <div className="mt-10 m-5 flex justify-between items-center">
+      <div className="mt-10 m-5 flex flex-wrap justify-between items-center">
         <div>
           <Button
             onClick={handleNewScore}
@@ -122,23 +131,24 @@ export const Host = () => {
           </Button>
         </div>
         <div>
-          <div className="font-semibold mb-2">
-            Share this with other participants
-          </div>
+          <span className="bg-blue-400 rounded-md text-white text-2xl p-4 px-24">
+            Majority Score: {majorityScore}
+          </span>
+        </div>
+        <div>
           <div className="flex">
             <div className="bg-blue-200 p-2 rounded-md flex items-center">
               https://score-me-8ccc3.web.app/participant/
               {inviteId}
             </div>
             <button
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  `https://score-me-8ccc3.web.app/participant/${inviteId}`
-                );
-              }}
-              className="m-2 border-black border-2 rounded-md p-2"
+              onClick={copyToClipboard}
+              className="m-2 border-black border-2 rounded-md p-2 w-52 flex items-center justify-center"
             >
-              COPY TO CLIPBOARD
+              <span className="mr-2">{copyText}</span>
+              <span className="mb-1">
+                {copyText === "Copied" && <CheckOutlined />}
+              </span>
             </button>
           </div>
         </div>
@@ -153,12 +163,6 @@ export const Host = () => {
             }}
           />
         ))}
-      </div>
-
-      <div className="mt-16 m-5">
-        <span className="bg-blue-400 rounded-md text-white text-2xl p-4">
-          Majority Score: {majorityScore}
-        </span>
       </div>
     </div>
   );

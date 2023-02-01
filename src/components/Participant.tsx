@@ -23,6 +23,7 @@ export const Participant = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOKClicked, setIsOKClicked] = useState(false);
   const [fullName, setFullName] = useState("");
+  const [selectedScore, setSelectedScore] = useState(0);
 
   const scorePoints = [1, 2, 3, 5, 8, 13, 20, 34, 55, 80];
 
@@ -46,6 +47,7 @@ export const Participant = () => {
 
   const sendScore = async (score: any) => {
     setIsNewScore(false);
+    setSelectedScore(score);
     await participantRef(inviteId)
       .where("fullName", "==", fullName)
       .get()
@@ -64,12 +66,14 @@ export const Participant = () => {
           {/* <div>Score among the following</div> */}
           <div className="flex justify-center items-center h-full w-1/2 flex-wrap">
             {scorePoints.map((score, id) => (
-              <div className="m-12">
+              <div className="m-8">
                 <button
                   onClick={() => sendScore(score)}
                   disabled={!isNewScore}
-                  className={`border-2 border-black bg-blue-500 text-white font-bold py-2 px-4 rounded-full text-3xl h-36 w-36 cursor-pointer ${
+                  className={`border-2 border-black bg-blue-500 text-white font-bold py-2 px-4 rounded-full text-3xl h-28 w-28 cursor-pointer ${
                     isNewScore ? "opacity-100" : "opacity-50"
+                  } ${
+                    !isNewScore && score === selectedScore && "bg-green-500"
                   }`}
                 >
                   {score}
@@ -97,6 +101,9 @@ export const Participant = () => {
               placeholder="Enter full name"
               onChange={(e) => {
                 setFullName(e.target.value);
+              }}
+              onKeyUp={(e) => {
+                e.key === "Enter" && handleOk();
               }}
               max="20"
               className="w-80 p-3 text-base placeholder-gray-600 border rounded-lg focus:shadow-outline"
