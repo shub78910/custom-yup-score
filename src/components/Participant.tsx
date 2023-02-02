@@ -13,6 +13,7 @@ export const Participant = () => {
   const [isNewScore, setIsNewScore] = useState(false);
   const [fullName, setFullName] = useState("");
   const [selectedScore, setSelectedScore] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
   const isNewScoreRef = useRef(isNewScore);
   const fullNameRef = useRef(fullName);
   isNewScoreRef.current = isNewScore;
@@ -29,6 +30,7 @@ export const Participant = () => {
           if (fullNameRef.current) {
             setTimeout(() => {
               if (isNewScoreRef.current) {
+                setShowAlert(true);
                 const audio = new Audio("/audios/notify.mp3");
                 audio.play();
               }
@@ -61,6 +63,7 @@ export const Participant = () => {
   const sendScore = async (score: any) => {
     setIsNewScore(false);
     setSelectedScore(score);
+    setShowAlert(false);
     await participantRef(inviteId)
       .where("fullName", "==", fullName)
       .get()
@@ -74,19 +77,25 @@ export const Participant = () => {
   };
   return (
     <div>
+      <div
+        className={`text-center  p-5 text-gray-500 text-2xl ${
+          showAlert ? "visible" : "invisible"
+        }`}
+      >
+        You haven't scored yet! Score please..
+      </div>
       {isOKClicked ? (
-        <div className="flex justify-center">
-          {/* <div>Score among the following</div> */}
-          <div className="flex justify-center items-center h-full w-1/2 flex-wrap">
+        <div className="flex justify-center mt-32">
+          <div className="flex justify-center items-center h-full w-2/3 flex-wrap">
             {scorePoints.map((score, id) => (
-              <div className="m-8">
+              <div className="mx-10 my-5">
                 <button
                   onClick={() => sendScore(score)}
                   disabled={!isNewScore}
-                  className={`border-2 border-black bg-blue-500 text-white font-bold py-2 px-4 rounded-full text-3xl h-28 w-28 cursor-pointer ${
+                  className={`border-2 border-black bg-blue-500 text-white text-center font-bold py-2 px-4 rounded-full text-3xl h-20 w-20 cursor-pointer ${
                     isNewScore ? "opacity-100" : "opacity-50"
                   } ${
-                    !isNewScore && score === selectedScore && "bg-green-500"
+                    !isNewScore && score === selectedScore && "bg-green-800"
                   }`}
                 >
                   {score}
@@ -99,6 +108,7 @@ export const Participant = () => {
         <>
           <Modal
             open={isModalOpen}
+            closable={false}
             footer={[
               <Button
                 className="bg-blue-500 text-white"

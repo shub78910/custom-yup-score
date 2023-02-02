@@ -5,13 +5,13 @@ import { db } from "../firebase";
 import { participantRef } from "../firebase.config";
 import ParticipantCard from "./ParticipantCard";
 import statusType from "../constants/status.constants";
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 
 export const Host = () => {
   let { inviteId } = useParams();
   const [participants, setParticipants] = useState<any>([]);
-  const [majorityScore, setMajorityScore] = useState<any>(0);
-  const [copyText, setCopyText] = useState<string>("Copy to Clipboard");
+  const [majorityScore, setMajorityScore] = useState<number>(0);
+  const [copyText, setCopyText] = useState<string>("Copy");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -98,48 +98,25 @@ export const Host = () => {
 
     setCopyText("Copied");
     setTimeout(() => {
-      setCopyText("Copy to Clipboard");
+      setCopyText("Copy");
     }, 3000);
   };
 
-  //todo:
-  //copy to clipboard button, show tick mark when copied.
-  //show majority score
-  //try to gamify it as much as possible
-
   return (
     <div>
-      <div className="m-5">
-        <Button
-          onClick={() => {
-            navigate("/");
-          }}
-          size="large"
-          type="primary"
-          className="bg-gray-500"
-        >
-          Back to home
-        </Button>
-      </div>
-      <div className="mt-10 m-5 flex flex-wrap justify-between items-center">
+      <div className="m-5 mb-10 flex items-center justify-between">
         <div>
           <Button
-            onClick={handleNewScore}
-            size="large"
-            type="primary"
-            className="w-28 m-3 bg-blue-500 text-white"
+            onClick={() => {
+              navigate("/");
+            }}
+            size="middle"
+            className="flex items-center"
           >
-            NEW
-          </Button>
-          <Button size="large" className="w-28 m-3" onClick={showScore}>
-            REVEAL
+            <ArrowLeftOutlined />
           </Button>
         </div>
-        <div>
-          <span className="bg-blue-400 rounded-md text-white text-2xl p-4 px-24">
-            Majority Score: {majorityScore}
-          </span>
-        </div>
+
         <div>
           <div className="flex">
             <div className="bg-blue-200 p-2 rounded-md flex items-center">
@@ -148,7 +125,7 @@ export const Host = () => {
             </div>
             <button
               onClick={copyToClipboard}
-              className="m-2 border-black border-2 rounded-md p-2 w-52 flex items-center justify-center"
+              className="m-2 border-black border-2 rounded-md p-2 w-24 flex items-center justify-center"
             >
               <span className="mr-2">{copyText}</span>
               <span className="mb-1">
@@ -156,6 +133,26 @@ export const Host = () => {
               </span>
             </button>
           </div>
+        </div>
+      </div>
+      <div className="m-5 flex flex-wrap justify-between items-center">
+        <div>
+          <Button
+            onClick={handleNewScore}
+            size="large"
+            type="primary"
+            className="w-28 mr-3 bg-blue-500 text-white"
+          >
+            NEW
+          </Button>
+          <Button size="large" className="w-28 m-3" onClick={showScore}>
+            REVEAL
+          </Button>
+        </div>
+        <div>
+          <span className="bg-blue-400 rounded-md text-white text-2xl p-4 px-16">
+            Majority Score: {majorityScore}
+          </span>
         </div>
       </div>
 

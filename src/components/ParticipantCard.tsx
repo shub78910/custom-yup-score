@@ -15,7 +15,7 @@ const ParticipantCard = ({ participant, scoreStatus }: any) => {
     <>
       {participant.status === statusType.REVEAL ? (
         <>
-          <div className="bg-blue-200 text-gray-700 h-80 w-52 m-4 rounded-md flex flex-col justify-center items-center">
+          <div className="bg-blue-200 text-gray-700 h-60 w-44 m-4 rounded-lg flex flex-col justify-center items-center">
             <div className="text-8xl mb-16">{participant.score}</div>
             <div
               className="text-2xl"
@@ -27,7 +27,7 @@ const ParticipantCard = ({ participant, scoreStatus }: any) => {
         </>
       ) : (
         <>
-          <div className="bg-blue-200 text-gray-700 h-80 w-52 m-4 flex flex-col justify-center items-center">
+          <div className="bg-blue-200 text-gray-700 h-60 w-44 m-4 rounded-lg flex flex-col justify-center items-center">
             <div>
               {participant.status === statusType.SCORING ? (
                 <div className="text-center">
