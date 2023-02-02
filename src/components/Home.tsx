@@ -13,7 +13,7 @@ export const Home = () => {
       scoreCount: 0,
     });
 
-    navigate(`/host/${newSessionCollection.id}`);
+    navigate(`/host/${newSessionCollection.id}`, { state: { fromHome: true } });
   };
   return (
     <div className="m-5">

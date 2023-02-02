@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Modal } from "antd";
 import { db } from "../firebase";
@@ -8,7 +8,17 @@ import statusConstants from "../constants/status.constants";
 export const Participant = () => {
   let { inviteId } = useParams();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOKClicked, setIsOKClicked] = useState(false);
   const [isNewScore, setIsNewScore] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [selectedScore, setSelectedScore] = useState(0);
+  const isNewScoreRef = useRef(isNewScore);
+  const fullNameRef = useRef(fullName);
+  isNewScoreRef.current = isNewScore;
+  fullNameRef.current = fullName;
+
+  const scorePoints = [1, 2, 3, 5, 8, 13, 20, 34, 55, 80];
 
   useEffect(() => {
     if (inviteId) {
@@ -16,16 +26,17 @@ export const Participant = () => {
         .doc(inviteId)
         .onSnapshot(() => {
           setIsNewScore(true);
+          if (fullNameRef.current) {
+            setTimeout(() => {
+              if (isNewScoreRef.current) {
+                const audio = new Audio("/audios/notify.mp3");
+                audio.play();
+              }
+            }, 10000);
+          }
         });
     }
   }, []);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isOKClicked, setIsOKClicked] = useState(false);
-  const [fullName, setFullName] = useState("");
-  const [selectedScore, setSelectedScore] = useState(0);
-
-  const scorePoints = [1, 2, 3, 5, 8, 13, 20, 34, 55, 80];
 
   const showModal = () => {
     setIsModalOpen(true);

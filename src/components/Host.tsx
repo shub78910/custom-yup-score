@@ -1,6 +1,6 @@
 import { Button } from "antd";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { db } from "../firebase";
 import { participantRef } from "../firebase.config";
 import ParticipantCard from "./ParticipantCard";
@@ -13,6 +13,11 @@ export const Host = () => {
   const [majorityScore, setMajorityScore] = useState<any>(0);
   const [copyText, setCopyText] = useState<string>("Copy to Clipboard");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  if (!location.state?.fromHome) {
+    navigate("/");
+  }
 
   useEffect(() => {
     if (inviteId) {
