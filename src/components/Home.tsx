@@ -31,8 +31,8 @@ export const Home = () => {
         <img
           src="https://42f2671d685f51e10fc6-b9fcecea3e50b3b59bdc28dead054ebc.ssl.cf5.rackcdn.com/illustrations/unDraw_1000_gty8.svg"
           alt="undraw"
-          height={800}
-          width={800}
+          height={500}
+          width={500}
         />
       </div>
     </div>
