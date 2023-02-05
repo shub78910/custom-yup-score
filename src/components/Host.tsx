@@ -130,7 +130,7 @@ export const Host = () => {
             </div>
             <button
               onClick={copyToClipboard}
-              className="m-2 border-red-900 border-2 rounded-md p-2 w-24 flex items-center justify-center"
+              className="m-2 border-red-800 border-2 rounded-md p-2 w-24 flex items-center justify-center"
             >
               <span className="mr-2">{copyText}</span>
               <span className="mb-1">
