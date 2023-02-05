@@ -41,6 +41,7 @@ export const Participant = () => {
         });
       return () => unsubscribe();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const showModal = () => {
