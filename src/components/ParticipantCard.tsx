@@ -1,8 +1,9 @@
 import statusType from "../constants/status.constants";
 import { Spin } from "antd";
 import { LoadingOutlined, CheckCircleOutlined } from "@ant-design/icons";
+import { Participant } from "../types/types";
 
-const ParticipantCard = ({ participant, scoreStatus }: any) => {
+const ParticipantCard = (participant: Participant) => {
   const antIcon = (
     <LoadingOutlined
       style={{ fontSize: 72 }}

@@ -4,12 +4,12 @@ import { Button, Modal } from "antd";
 import { db } from "../firebase";
 import { participantRef } from "../firebase.config";
 import statusConstants from "../constants/status.constants";
+import { scorePoints } from "../constants/scores";
 
 export const Participant = () => {
   let { inviteId } = useParams();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isOKClicked, setIsOKClicked] = useState(false);
   const [isNewScore, setIsNewScore] = useState(false);
   const [fullName, setFullName] = useState("");
   const [selectedScore, setSelectedScore] = useState(0);
@@ -19,14 +19,16 @@ export const Participant = () => {
   isNewScoreRef.current = isNewScore;
   fullNameRef.current = fullName;
 
-  const scorePoints = [1, 2, 3, 5, 8, 13, 20, 34, 55, 80];
-
   useEffect(() => {
+    showModal();
+
     if (inviteId) {
-      db.collection("Sessions")
+      const unsubscribe = db
+        .collection("Sessions")
         .doc(inviteId)
         .onSnapshot(() => {
           setIsNewScore(true);
+          setShowAlert(false);
           if (fullNameRef.current) {
             setTimeout(() => {
               if (isNewScoreRef.current) {
@@ -37,6 +39,7 @@ export const Participant = () => {
             }, 10000);
           }
         });
+      return () => unsubscribe();
     }
   }, []);
 
@@ -44,14 +47,9 @@ export const Participant = () => {
     setIsModalOpen(true);
   };
 
-  useEffect(() => {
-    showModal();
-  }, []);
-
   const handleOk = () => {
     if (fullName !== "") {
       setIsModalOpen(false);
-      setIsOKClicked(true);
       participantRef(inviteId).add({
         fullName,
         score: 0,
@@ -60,7 +58,7 @@ export const Participant = () => {
     }
   };
 
-  const sendScore = async (score: any) => {
+  const sendScore = async (score: number) => {
     setIsNewScore(false);
     setSelectedScore(score);
     setShowAlert(false);
@@ -75,20 +73,21 @@ export const Participant = () => {
         });
       });
   };
+
   return (
     <div>
       <div
-        className={`text-center  p-5 text-gray-500 text-2xl ${
-          showAlert ? "visible" : "invisible"
-        }`}
+        className={`text-center  mt-10 ${showAlert ? "visible" : "invisible"}`}
       >
-        You haven't scored yet! Score please..
+        <span className="p-2 rounded-md bg-red-400 text-white text-2xl ">
+          You haven't scored yet! Score please..
+        </span>
       </div>
-      {isOKClicked ? (
+      {!isModalOpen ? (
         <div className="flex justify-center mt-32">
           <div className="flex justify-center items-center h-full w-2/3 flex-wrap">
             {scorePoints.map((score, id) => (
-              <div className="mx-10 my-5">
+              <div className="mx-10 my-5" key={id}>
                 <button
                   onClick={() => sendScore(score)}
                   disabled={!isNewScore}

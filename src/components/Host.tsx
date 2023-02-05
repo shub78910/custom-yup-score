@@ -6,6 +6,7 @@ import { participantRef } from "../firebase.config";
 import ParticipantCard from "./ParticipantCard";
 import statusType from "../constants/status.constants";
 import { CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { Participant } from "../types/types";
 
 export const Host = () => {
   let { inviteId } = useParams();
@@ -21,12 +22,14 @@ export const Host = () => {
 
   useEffect(() => {
     if (inviteId) {
-      participantRef(inviteId).onSnapshot((snapshot) => {
+      const unsubscribe = participantRef(inviteId).onSnapshot((snapshot) => {
         let refData = snapshot.docs.map((doc) => doc.data());
         const refId = snapshot.docs.map((doc) => doc.id);
         refData.forEach((item) => (item.id = refId[refData.indexOf(item)]));
         setParticipants(refData);
       });
+
+      return () => unsubscribe();
     }
   }, []);
 
@@ -79,7 +82,9 @@ export const Host = () => {
   };
 
   const calculateMajorityScore = () => {
-    let scores = participants.map((item: any) => item.score);
+    let scores = participants.map(
+      (participant: Participant) => participant.score
+    );
     let majorityScore = scores
       .sort(
         (a: number, b: number) =>
@@ -157,13 +162,8 @@ export const Host = () => {
       </div>
 
       <div className="flex justify-center items-center flex-wrap">
-        {participants?.map((participant: any) => (
-          <ParticipantCard
-            {...{
-              participant,
-              inviteId,
-            }}
-          />
+        {participants?.map((participant: Participant) => (
+          <ParticipantCard {...participant} />
         ))}
       </div>
     </div>
