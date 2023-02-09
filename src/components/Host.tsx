@@ -11,6 +11,7 @@ import { Participant } from "../types/types";
 export const Host = () => {
   let { inviteId } = useParams();
   const [participants, setParticipants] = useState<any>([]);
+  const [sortedScores, setSortedScores] = useState<any>([]);
   const [majorityScore, setMajorityScore] = useState<number>(0);
   const [copyText, setCopyText] = useState<string>("Copy");
   const navigate = useNavigate();
@@ -35,6 +36,8 @@ export const Host = () => {
   }, []);
 
   const handleNewScore = async () => {
+    setMajorityScore(0);
+    setSortedScores([]);
     let currentScoreCount;
     await db
       .collection("Sessions")
@@ -67,8 +70,37 @@ export const Host = () => {
       });
   };
 
+  const calculateMajorityScore = () => {
+    let scores = participants.map(
+      (participant: Participant) => participant.score
+    );
+    const scoresWithoutZero = scores.filter((score: number) => score !== 0);
+
+    let majorityScore = scoresWithoutZero
+      .sort(
+        (a: number, b: number) =>
+          scores.filter((v: number) => v === a).length -
+          scores.filter((v: number) => v === b).length
+      )
+      .pop();
+
+    setMajorityScore(majorityScore);
+  };
+
+  const sortScores = () => {
+    let scores = participants.map(
+      (participant: Participant) => participant.score
+    );
+
+    const scoresWithoutZero = scores.filter((score: number) => score !== 0);
+    let sortedScores = scoresWithoutZero.sort((a: number, b: number) => b - a);
+
+    setSortedScores(sortedScores);
+  };
+
   const showScore = async () => {
     calculateMajorityScore();
+    sortScores();
 
     await db;
     participantRef(inviteId)
@@ -80,21 +112,6 @@ export const Host = () => {
           });
         });
       });
-  };
-
-  const calculateMajorityScore = () => {
-    let scores = participants.map(
-      (participant: Participant) => participant.score
-    );
-    let majorityScore = scores
-      .sort(
-        (a: number, b: number) =>
-          scores.filter((v: number) => v === a).length -
-          scores.filter((v: number) => v === b).length
-      )
-      .pop();
-
-    setMajorityScore(majorityScore);
   };
 
   const copyToClipboard = () => {
@@ -131,17 +148,15 @@ export const Host = () => {
             </div>
             <button
               onClick={copyToClipboard}
-              className="m-2 border-black border-2 rounded-md p-2 w-24 flex items-center justify-center"
+              className="m-2 border-black border-2 rounded-md p-2 w-32 flex items-center justify-center"
             >
-              <span className="mr-2">{copyText}</span>
-              <span className="mb-1">
-                {copyText === "Copied" && <CheckOutlined />}
-              </span>
+              <div className="mr-2">{copyText}</div>
+              <div>{copyText === "Copied" && <CheckOutlined />}</div>
             </button>
           </div>
         </div>
       </div>
-      <div className="m-5 flex flex-wrap justify-between items-center">
+      <div className="m-5 flex flex-wrap justify-between items-start">
         <div>
           <Button
             onClick={handleNewScore}
@@ -155,10 +170,23 @@ export const Host = () => {
             REVEAL
           </Button>
         </div>
-        <div>
-          <span className="bg-blue-400 rounded-md text-white text-2xl p-4 px-16">
-            Majority Score: {majorityScore}
-          </span>
+
+        <div className="w-44 mt-2 text-left">
+          <div className="m-2 bg-blue-400 rounded-md text-white text-xl pl-4 p-2">
+            Majority: {majorityScore ?? 0}
+          </div>
+          <div className="m-2 bg-blue-400 rounded-md text-white text-xl pl-4 p-2">
+            Highest: {sortedScores[0] ?? 0}
+          </div>
+          <div className="m-2 bg-blue-400 rounded-md text-white text-xl pl-4 p-2">
+            Lowest: {sortedScores[sortedScores.length - 1] ?? 0}
+          </div>
+          <div className="m-2 bg-blue-400 rounded-md text-white text-xl pl-4 p-2">
+            Difference:{" "}
+            {isNaN(sortedScores[0] - sortedScores[sortedScores?.length - 1])
+              ? 0
+              : sortedScores[0] - sortedScores[sortedScores?.length - 1]}
+          </div>
         </div>
       </div>
 
