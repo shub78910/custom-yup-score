@@ -54,6 +54,7 @@ export const Host = () => {
     };
 
     updateScoreCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scoreCount]);
 
   const handleNewScore = async () => {
