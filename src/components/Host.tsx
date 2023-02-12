@@ -38,6 +38,10 @@ export const Host = () => {
 
   useEffect(() => {
     const updateScoreCount = async () => {
+      await db.collection("Sessions").doc(inviteId).update({
+        scoreCount: scoreCount,
+      });
+
       await db
         .collection("Sessions")
         .doc(inviteId)
@@ -61,10 +65,6 @@ export const Host = () => {
     setMajorityScore(0);
     setSortedScores([]);
     setScoreCount((scoreCount) => scoreCount + 1);
-
-    await db.collection("Sessions").doc(inviteId).update({
-      scoreCount: scoreCount,
-    });
   };
 
   const calculateMajorityScore = () => {
