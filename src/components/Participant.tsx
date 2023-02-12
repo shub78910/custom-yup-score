@@ -12,6 +12,7 @@ export const Participant = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNewScore, setIsNewScore] = useState(false);
   const [fullName, setFullName] = useState("");
+  const [participantId, setParticipantId] = useState("");
   const [selectedScore, setSelectedScore] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
   const isNewScoreRef = useRef(isNewScore);
@@ -48,14 +49,16 @@ export const Participant = () => {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     if (fullName !== "") {
       setIsModalOpen(false);
-      participantRef(inviteId).add({
+      const res = await participantRef(inviteId).add({
         fullName,
         score: 0,
         status: statusConstants.SCORING,
       });
+
+      setParticipantId(res.id);
     }
   };
 
@@ -63,16 +66,10 @@ export const Participant = () => {
     setIsNewScore(false);
     setSelectedScore(score);
     setShowAlert(false);
-    await participantRef(inviteId)
-      .where("fullName", "==", fullName)
-      .get()
-      .then(async (querySnapshot) => {
-        const docToUpdate = querySnapshot.docs[0].id;
-        participantRef(inviteId).doc(docToUpdate).update({
-          score,
-          status: statusConstants.SCORED,
-        });
-      });
+    await participantRef(inviteId).doc(participantId).update({
+      score,
+      status: statusConstants.SCORED,
+    });
   };
 
   return (

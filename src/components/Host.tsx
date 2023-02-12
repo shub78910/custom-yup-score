@@ -13,6 +13,7 @@ export const Host = () => {
   const [participants, setParticipants] = useState<any>([]);
   const [sortedScores, setSortedScores] = useState<any>([]);
   const [majorityScore, setMajorityScore] = useState<number>(0);
+  const [scoreCount, setScoreCount] = useState<number>(0);
   const [copyText, setCopyText] = useState<string>("Copy");
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,39 +36,34 @@ export const Host = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const updateScoreCount = async () => {
+      await db
+        .collection("Sessions")
+        .doc(inviteId)
+        .collection("participants")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            participantRef(inviteId).doc(doc.id).update({
+              score: 0,
+              status: statusType.SCORING,
+            });
+          });
+        });
+    };
+
+    updateScoreCount();
+  }, [scoreCount]);
+
   const handleNewScore = async () => {
     setMajorityScore(0);
     setSortedScores([]);
-    let currentScoreCount;
-    await db
-      .collection("Sessions")
-      .doc(inviteId)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          currentScoreCount = doc.data()?.scoreCount;
-        }
-      });
-
-    const newScore = (currentScoreCount ?? 0) + 1;
+    setScoreCount((scoreCount) => scoreCount + 1);
 
     await db.collection("Sessions").doc(inviteId).update({
-      scoreCount: newScore,
+      scoreCount: scoreCount,
     });
-
-    await db
-      .collection("Sessions")
-      .doc(inviteId)
-      .collection("participants")
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          participantRef(inviteId).doc(doc.id).update({
-            score: 0,
-            status: statusType.SCORING,
-          });
-        });
-      });
   };
 
   const calculateMajorityScore = () => {

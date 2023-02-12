@@ -17,9 +17,9 @@ const ParticipantCard = (participant: Participant) => {
       {participant.status === statusType.REVEAL ? (
         <>
           <div className="bg-blue-200 text-gray-700 h-60 w-44 m-4 rounded-lg flex flex-col justify-center items-center">
-            <div className="text-8xl mb-16">{participant.score}</div>
+            <div className="text-8xl mb-16 mt-2">{participant.score}</div>
             <div
-              className="text-2xl"
+              className="text-2xl text-center h-40"
               style={{ fontFamily: "Raleway, sans-serif", fontWeight: 700 }}
             >
               {participant.fullName}
