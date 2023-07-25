@@ -1,10 +1,11 @@
 import statusType from "../constants/status.constants";
-import { Spin, Tooltip } from "antd";
+import { Popconfirm, Spin, Tooltip } from "antd";
 import { LoadingOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { Participant } from "../types/types";
 import When from "./When";
 import { AiFillDelete } from "react-icons/ai";
 import ParticipantName from "./ParticipantName";
+import { useState } from "react";
 
 const ParticipantCard = ({
   participant,
@@ -13,6 +14,7 @@ const ParticipantCard = ({
   participant: Participant;
   deleteParticipant: (id: string) => void;
 }) => {
+  const [showDeletePopUp, setShowDeletePopUp] = useState<boolean>(false);
   const antIcon = (
     <LoadingOutlined
       style={{ fontSize: 72 }}
@@ -25,11 +27,18 @@ const ParticipantCard = ({
     <>
       <div className="bg-blue-200 text-gray-700 h-72 w-44 m-4 rounded-lg flex flex-col justify-center items-center relative">
         <div className="my-2 absolute top-0 right-0 mr-2">
-          <Tooltip placement="top" title="Kick out participant">
-            <button onClick={() => deleteParticipant(participant.id)}>
-              <AiFillDelete size={20} color="black" />
-            </button>
-          </Tooltip>
+          <Popconfirm
+            title="Are you sure, you want to delete this participant?"
+            open={showDeletePopUp}
+            onConfirm={() => deleteParticipant(participant.id)}
+            onCancel={() => setShowDeletePopUp(false)}
+          >
+            <Tooltip placement="top" title="Kick out participant">
+              <button onClick={() => setShowDeletePopUp(true)}>
+                <AiFillDelete size={20} color="black" />
+              </button>
+            </Tooltip>
+          </Popconfirm>
         </div>
         <When isTrue={participant.status === statusType.REVEAL}>
           <div className="text-8xl mb-16 mt-2">{participant.score}</div>
