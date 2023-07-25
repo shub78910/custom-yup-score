@@ -122,6 +122,10 @@ export const Host = () => {
     }, 3000);
   };
 
+  const deleteParticipant = (id: string) => {
+    participantRef(inviteId).doc(id).delete();
+  };
+
   return (
     <div>
       <div className="m-5 mb-10 flex items-center justify-between">
@@ -189,7 +193,7 @@ export const Host = () => {
 
       <div className="flex justify-center items-center flex-wrap">
         {participants?.map((participant: Participant) => (
-          <ParticipantCard {...participant} />
+          <ParticipantCard {...{ participant, deleteParticipant }} />
         ))}
       </div>
     </div>
