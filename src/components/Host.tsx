@@ -2,7 +2,7 @@ import { Button } from "antd";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { db } from "../firebase";
-import { participantRef } from "../firebase.config";
+import { participantRef } from "../firebaseRefs";
 import ParticipantCard from "./ParticipantCard";
 import statusType from "../constants/status.constants";
 import { CheckOutlined, ArrowLeftOutlined } from "@ant-design/icons";
@@ -25,10 +25,12 @@ export const Host = () => {
   useEffect(() => {
     if (inviteId) {
       const unsubscribe = participantRef(inviteId).onSnapshot((snapshot) => {
-        let refData = snapshot.docs.map((doc) => doc.data());
+        let participantsSnapshot = snapshot.docs.map((doc) => doc.data());
         const refId = snapshot.docs.map((doc) => doc.id);
-        refData.forEach((item) => (item.id = refId[refData.indexOf(item)]));
-        setParticipants(refData);
+        const participants = participantsSnapshot.map((item) => {
+          return { ...item, id: refId[participantsSnapshot.indexOf(item)] };
+        });
+        setParticipants(participants);
       });
 
       return () => unsubscribe();
@@ -122,10 +124,6 @@ export const Host = () => {
     }, 3000);
   };
 
-  const deleteParticipant = (id: string) => {
-    participantRef(inviteId).doc(id).delete();
-  };
-
   return (
     <div>
       <div className="m-5 mb-10 flex items-center justify-between">
@@ -193,7 +191,7 @@ export const Host = () => {
 
       <div className="flex justify-center items-center flex-wrap">
         {participants?.map((participant: Participant) => (
-          <ParticipantCard {...{ participant, deleteParticipant }} />
+          <ParticipantCard {...{ participant, inviteId }} />
         ))}
       </div>
     </div>

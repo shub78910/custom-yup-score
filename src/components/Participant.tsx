@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Modal } from "antd";
 import { db } from "../firebase";
-import { participantRef } from "../firebase.config";
+import { participantRef } from "../firebaseRefs";
 import statusConstants from "../constants/status.constants";
 import { scorePoints } from "../constants/scores";
 

@@ -6,15 +6,22 @@ import When from "./When";
 import { AiFillDelete } from "react-icons/ai";
 import ParticipantName from "./ParticipantName";
 import { useState } from "react";
+import { participantRef } from "../firebaseRefs";
 
 const ParticipantCard = ({
   participant,
-  deleteParticipant,
+  inviteId,
 }: {
   participant: Participant;
-  deleteParticipant: (id: string) => void;
+  inviteId: string | undefined;
 }) => {
   const [showDeletePopUp, setShowDeletePopUp] = useState<boolean>(false);
+
+  const deleteParticipant = (id: string) => {
+    participantRef(inviteId).doc(id).delete();
+    setShowDeletePopUp(false);
+  };
+
   const antIcon = (
     <LoadingOutlined
       style={{ fontSize: 72 }}
@@ -41,7 +48,7 @@ const ParticipantCard = ({
           </Popconfirm>
         </div>
         <When isTrue={participant.status === statusType.REVEAL}>
-          <div className="text-8xl mb-16 mt-2">{participant.score}</div>
+          <div className="text-8xl mb-10 mt-2">{participant.score}</div>
           <div>
             <ParticipantName {...{ fullName: participant.fullName }} />
           </div>

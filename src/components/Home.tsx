@@ -22,7 +22,7 @@ export const Home = () => {
           onClick={createNewSession}
           size="large"
           type="primary"
-          className="bg-blue-500 text-white w-72"
+          className="w-72"
         >
           Create a new session
         </Button>
