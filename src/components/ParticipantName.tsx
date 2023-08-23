@@ -4,7 +4,7 @@ const ParticipantName = ({ fullName }: { fullName: string }) => {
   return (
     <>
       <div
-        className="text-2xl break-all text-center px-2"
+        className="text-2xl text-center px-2"
         style={{
           fontFamily: "Raleway, sans-serif",
           fontWeight: 700,
